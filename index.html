@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I built a full AI infrastructure and live trading system on a budget Android phone — and it actually works</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg2: #f6f5f1;
+    --bg3: #f0ede6;
+    --text: #1a1a18;
+    --text2: #5c5b56;
+    --text3: #9a9890;
+    --border: rgba(0,0,0,0.12);
+    --border2: rgba(0,0,0,0.22);
+    --teal: #0F6E56;
+    --teal-bg: #E1F5EE;
+    --teal-mid: #1D9E75;
+    --blue: #185FA5;
+    --blue-bg: #E6F1FB;
+    --amber: #854F0B;
+    --amber-bg: #FAEEDA;
+    --amber-mid: #EF9F27;
+    --purple: #3C3489;
+    --purple-bg: #EEEDFE;
+    --purple-mid: #7F77DD;
+    --coral: #993C1D;
+    --coral-bg: #FAECE7;
+    --green: #3B6D11;
+    --green-bg: #EAF3DE;
+    --gray: #444441;
+    --gray-bg: #F1EFE8;
+    --gray-mid: #888780;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18;
+      --bg2: #242420;
+      --bg3: #2e2e2a;
+      --text: #e8e6df;
+      --text2: #9a9890;
+      --text3: #5c5b56;
+      --border: rgba(255,255,255,0.1);
+      --border2: rgba(255,255,255,0.2);
+      --teal-bg: #04342C;
+      --teal: #5DCAA5;
+      --blue-bg: #042C53;
+      --blue: #85B7EB;
+      --amber-bg: #412402;
+      --amber: #FAC775;
+      --purple-bg: #26215C;
+      --purple: #AFA9EC;
+      --coral-bg: #4A1B0C;
+      --coral: #F0997B;
+      --green-bg: #173404;
+      --green: #97C459;
+      --gray-bg: #2C2C2A;
+      --gray: #B4B2A9;
+    }
+  }
+
+  html { font-size: 16px; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.7;
+    padding: 0;
+  }
+
+  /* Header bar */
+  .site-bar {
+    background: var(--bg);
+    border-bottom: 0.5px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .site-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+    letter-spacing: -.02em;
+  }
+  .site-logo span { color: var(--teal-mid); }
+  .site-section {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  /* Layout */
+  .container {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* Article header */
+  .article-header { padding: 40px 0 32px; }
+  .tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .tag-ai { background: var(--teal-bg); color: var(--teal); }
+  .tag-mobile { background: var(--blue-bg); color: var(--blue); }
+  .tag-trading { background: var(--amber-bg); color: var(--amber); }
+  .tag-self { background: var(--purple-bg); color: var(--purple); }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(24px, 5vw, 38px);
+    font-weight: 900;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .byline {
+    font-size: 13px;
+    color: var(--text2);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 4px;
+  }
+  .date {
+    font-size: 12px;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 24px;
+  }
+  .deck {
+    font-size: 17px;
+    color: var(--text2);
+    font-style: italic;
+    border-left: 3px solid var(--teal-mid);
+    padding-left: 16px;
+    border-radius: 0;
+    line-height: 1.6;
+  }
+
+  /* Body */
+  .divider { height: 0.5px; background: var(--border); margin: 32px 0; }
+
+  p { font-size: 16px; margin-bottom: 1.1rem; color: var(--text); }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 36px 0 4px;
+    color: var(--text);
+  }
+  .section-sub {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text3);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  /* Spec box */
+  .spec-box {
+    background: var(--bg2);
+    border-radius: 10px;
+    border: 0.5px solid var(--border);
+    padding: 14px 18px;
+    margin: 16px 0;
+  }
+  .spec-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 5px 0;
+    font-size: 14px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-label {
+    color: var(--text3);
+    min-width: 130px;
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+  .spec-val { color: var(--text); flex: 1; }
+
+  /* Callout */
+  .callout {
+    background: var(--amber-bg);
+    border-left: 3px solid var(--amber-mid);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 20px 0;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .callout strong { color: var(--amber); font-weight: 600; }
+
+  /* Achievement cards */
+  .achievement {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 12px 0;
+  }
+  .ach-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .ach-desc {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.55;
+    font-family: 'Source Serif 4', serif;
+  }
+
+  /* Stat row */
+  .stat-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .stat {
+    background: var(--bg2);
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* Diagram containers */
+  .diagram-wrap {
+    margin: 28px 0;
+    background: var(--bg2);
+    border-radius: 12px;
+    border: 0.5px solid var(--border);
+    padding: 20px 16px 16px;
+    overflow: hidden;
+  }
+  .diagram-caption {
+    font-size: 12px;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+    text-align: center;
+    margin-top: 10px;
+    letter-spacing: .04em;
+  }
+
+  svg text { font-family: 'JetBrains Mono', monospace; }
+  .t  { fill: var(--text);  font-size: 14px; font-weight: 400; }
+  .th { fill: var(--text);  font-size: 14px; font-weight: 600; }
+  .ts { fill: var(--text2); font-size: 12px; font-weight: 400; }
+
+  /* SVG node class */
+  .node { cursor: default; }
+  .box-teal  rect { fill: var(--teal-bg); stroke: var(--teal); stroke-width: 0.5; }
+  .box-teal  text { fill: var(--teal); }
+  .box-purple rect { fill: var(--purple-bg); stroke: var(--purple-mid); stroke-width: 0.5; }
+  .box-purple text.th { fill: var(--purple); }
+  .box-purple text.ts { fill: var(--purple-mid); }
+  .box-amber  rect { fill: var(--amber-bg); stroke: var(--amber-mid); stroke-width: 0.5; }
+  .box-amber  text.th { fill: var(--amber); }
+  .box-amber  text.ts { fill: var(--amber); opacity: .8; }
+  .box-blue   rect { fill: var(--blue-bg); stroke: var(--blue); stroke-width: 0.5; }
+  .box-blue   text { fill: var(--blue); }
+  .box-coral  rect { fill: var(--coral-bg); stroke: var(--coral); stroke-width: 0.5; }
+  .box-coral  text { fill: var(--coral); }
+  .box-green  rect { fill: var(--green-bg); stroke: var(--green); stroke-width: 0.5; }
+  .box-green  text { fill: var(--green); }
+  .box-gray   rect { fill: var(--gray-bg); stroke: var(--gray-mid); stroke-width: 0.5; }
+  .box-gray   text { fill: var(--gray); }
+  .arr { stroke: var(--gray-mid); stroke-width: 1.5; fill: none; }
+
+  /* Bar chart */
+  .chart-section { margin: 28px 0; }
+  .chart-title-txt {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: .03em;
+  }
+  .legend { display: flex; gap: 18px; margin-bottom: 14px; }
+  .leg-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text2); font-family: 'JetBrains Mono', monospace; }
+  .leg-dot { width: 13px; height: 13px; border-radius: 3px; flex-shrink: 0; }
+  .bar-row { margin-bottom: 14px; }
+  .bar-label { font-size: 12px; color: var(--text2); margin-bottom: 5px; font-family: 'JetBrains Mono', monospace; }
+  .bars { display: flex; gap: 6px; align-items: center; flex-direction: column; }
+  .bar {
+    height: 30px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+    align-self: flex-start;
+  }
+  .bar-you { background: var(--teal-bg); color: var(--teal); }
+  .bar-typical { background: var(--gray-bg); color: var(--gray); }
+
+  /* Outro */
+  .outro {
+    font-size: 14px;
+    color: var(--text2);
+    font-style: italic;
+    border-top: 0.5px solid var(--border);
+    padding-top: 24px;
+    margin-top: 32px;
+    line-height: 1.7;
+  }
+
+  /* Footer */
+  .footer {
+    background: var(--bg2);
+    border-top: 0.5px solid var(--border);
+    padding: 28px 24px;
+    text-align: center;
+    margin-top: 60px;
+  }
+  .footer p { font-size: 13px; color: var(--text3); font-family: 'JetBrains Mono', monospace; margin: 0; }
+
+  @media (max-width: 600px) {
+    .container { padding: 0 16px 60px; }
+    .stat-row { grid-template-columns: 1fr 1fr; }
+    .spec-label { min-width: 100px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Site bar -->
+<div class="site-bar">
+  <div class="site-logo">B<span>AI</span>LAB</div>
+  <div class="site-section">Self-Hosting · AI · Trading</div>
+</div>
+
+<div class="container">
+
+  <!-- Article header -->
+  <div class="article-header">
+    <div class="tag-row">
+      <span class="tag tag-ai">Local AI</span>
+      <span class="tag tag-mobile">Android / Termux</span>
+      <span class="tag tag-trading">Algo Trading</span>
+      <span class="tag tag-self">Self-Hosting</span>
+    </div>
+    <h1>I built a full AI infrastructure and live trading system on a budget Android phone — and it actually works</h1>
+    <div class="byline">By Bibhash — Independent Developer &amp; Algorithmic Trader</div>
+    <div class="date">June 2026 &nbsp;·&nbsp; Bhubaneswar, India</div>
+    <div class="deck">No laptop, no GPU, no desktop. Just a mid-range phone, a terminal emulator, and a lot of persistence.</div>
+  </div>
+
+  <p>Every guide about running local AI models assumes you have at least a dedicated GPU. Every trading automation tutorial assumes you have a Python environment on a proper computer. Every cloud deployment walkthrough assumes you have SSH from a real machine.</p>
+
+  <p>None of that applied to my situation. My entire development environment lives on a Motorola Edge 20 — a mid-range Android phone — running inside Termux. No laptop, no external keyboard dock, no GPU cluster. Just a phone, a terminal, and 8 GB of RAM doing work that most people would say requires far more.</p>
+
+  <div class="divider"></div>
+
+  <!-- Hardware -->
+  <h2>The hardware constraint that shaped everything</h2>
+  <div class="section-sub">Platform</div>
+
+  <div class="spec-box">
+    <div class="spec-row"><span class="spec-label">Device</span><span class="spec-val">Motorola Edge 20</span></div>
+    <div class="spec-row"><span class="spec-label">Architecture</span><span class="spec-val">aarch64 (ARM64)</span></div>
+    <div class="spec-row"><span class="spec-label">RAM</span><span class="spec-val">8 GB</span></div>
+    <div class="spec-row"><span class="spec-label">Environment</span><span class="spec-val">Termux on Android</span></div>
+    <div class="spec-row"><span class="spec-label">Cloud Server</span><span class="spec-val">Oracle Cloud VPS · Ubuntu 22.04</span></div>
+    <div class="spec-row"><span class="spec-label">Hard Constraint</span><span class="spec-val">No pandas, numpy, yfinance, scipy, ta-lib</span></div>
+  </div>
+
+  <p>The aarch64 architecture forced every library choice. Packages that work trivially on x86 simply don't compile. Storage limits ruled out heavy dependencies entirely. This forced a discipline that turned out to be a feature — every component of the system is lean, purpose-built, and dependency-minimal.</p>
+
+  <div class="callout"><strong>Key insight:</strong> Constraints that seem like blockers often become the best design decisions. When you can't use pandas, you write pure Python that runs anywhere. When you can't install heavy deps, your system stays fast and portable.</div>
+
+  <!-- Hardware comparison chart -->
+  <div class="chart-section">
+    <div class="chart-title-txt">What most guides assume vs what is actually used here</div>
+    <div class="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:var(--teal-bg);border:1px solid var(--teal)"></div>This setup</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--gray-bg);border:1px solid var(--gray-mid)"></div>Typical guide assumes</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">RAM</div>
+      <div class="bars">
+        <div class="bar bar-you" style="width:220px">8 GB</div>
+        <div class="bar bar-typical" style="width:420px">32 GB+ recommended</div>
+      </div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">GPU VRAM</div>
+      <div class="bars">
+        <div class="bar bar-you" style="width:80px">0 GB</div>
+        <div class="bar bar-typical" style="width:380px">8–24 GB VRAM (RTX 3080+)</div>
+      </div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Compute platform</div>
+      <div class="bars">
+        <div class="bar bar-you" style="width:260px">ARM CPU · Android phone</div>
+        <div class="bar bar-typical" style="width:360px">x86 desktop or laptop</div>
+      </div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Local model size</div>
+      <div class="bars">
+        <div class="bar bar-you" style="width:200px">Qwen3 4B · quantized</div>
+        <div class="bar bar-typical" style="width:340px">7B–70B on dedicated GPU</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- AI section -->
+  <h2>Bibhash AI: a multi-model middleware running locally</h2>
+  <div class="section-sub">Local AI Infrastructure</div>
+
+  <p>The centerpiece of the setup is a Flask-based middleware running on localhost:5000. Rather than picking a single AI provider, the system routes queries intelligently across multiple backends — cloud APIs for heavy reasoning tasks, and a locally-running quantized model for offline and low-latency use.</p>
+
+  <!-- Architecture diagram -->
+  <div class="diagram-wrap">
+    <svg width="100%" viewBox="0 0 680 460" role="img">
+      <title>Bibhash AI system architecture</title>
+      <desc>Structural diagram showing Flask middleware routing to local Qwen model and cloud APIs.</desc>
+      <defs>
+        <marker id="arr1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <!-- outer container -->
+      <g class="box-gray">
+        <rect x="10" y="10" width="660" height="440" rx="16" />
+        <text class="th" x="340" y="38" text-anchor="middle">Bibhash AI — system architecture</text>
+        <text class="ts" x="340" y="55" text-anchor="middle">Motorola Edge 20 · 8 GB RAM · aarch64 · Termux</text>
+      </g>
+      <!-- Web UI -->
+      <g class="node box-teal">
+        <rect x="240" y="74" width="200" height="50" rx="8"/>
+        <text class="th" x="340" y="95" text-anchor="middle" dominant-baseline="central">Web UI</text>
+        <text class="ts" x="340" y="113" text-anchor="middle" dominant-baseline="central">bibhash_ai.html</text>
+      </g>
+      <line x1="340" y1="124" x2="340" y2="152" class="arr" stroke="#1D9E75" marker-end="url(#arr1)"/>
+      <!-- Flask -->
+      <g class="node box-purple">
+        <rect x="210" y="152" width="260" height="50" rx="8"/>
+        <text class="th" x="340" y="173" text-anchor="middle" dominant-baseline="central">Flask middleware</text>
+        <text class="ts" x="340" y="191" text-anchor="middle" dominant-baseline="central">localhost:5000 · router layer</text>
+      </g>
+      <!-- arrows down from flask -->
+      <line x1="255" y1="202" x2="120" y2="258" class="arr" stroke="#7F77DD" marker-end="url(#arr1)"/>
+      <line x1="295" y1="202" x2="225" y2="258" class="arr" stroke="#7F77DD" marker-end="url(#arr1)"/>
+      <line x1="385" y1="202" x2="455" y2="258" class="arr" stroke="#7F77DD" marker-end="url(#arr1)"/>
+      <line x1="425" y1="202" x2="570" y2="258" class="arr" stroke="#7F77DD" marker-end="url(#arr1)"/>
+      <!-- zone labels -->
+      <text class="ts" x="120" y="248" text-anchor="middle">Local · offline</text>
+      <text class="ts" x="490" y="248" text-anchor="middle">Cloud APIs</text>
+      <!-- Qwen local -->
+      <g class="node box-amber">
+        <rect x="38" y="258" width="170" height="68" rx="8"/>
+        <text class="th" x="123" y="282" text-anchor="middle" dominant-baseline="central">Qwen3 4B</text>
+        <text class="ts" x="123" y="300" text-anchor="middle" dominant-baseline="central">llama.cpp · on-device</text>
+        <text class="ts" x="123" y="316" text-anchor="middle" dominant-baseline="central">private · no internet</text>
+      </g>
+      <!-- Claude -->
+      <g class="node box-blue">
+        <rect x="162" y="258" width="130" height="50" rx="8"/>
+        <text class="th" x="227" y="279" text-anchor="middle" dominant-baseline="central">Claude</text>
+        <text class="ts" x="227" y="297" text-anchor="middle" dominant-baseline="central">Anthropic API</text>
+      </g>
+      <!-- Gemini -->
+      <g class="node box-teal">
+        <rect x="388" y="258" width="130" height="50" rx="8"/>
+        <text class="th" x="453" y="279" text-anchor="middle" dominant-baseline="central">Gemini</text>
+        <text class="ts" x="453" y="297" text-anchor="middle" dominant-baseline="central">Google API</text>
+      </g>
+      <!-- DeepSeek -->
+      <g class="node box-coral">
+        <rect x="504" y="258" width="148" height="50" rx="8"/>
+        <text class="th" x="578" y="279" text-anchor="middle" dominant-baseline="central">DeepSeek</text>
+        <text class="ts" x="578" y="297" text-anchor="middle" dominant-baseline="central">Cloud API</text>
+      </g>
+      <!-- Aladdin -->
+      <g class="node box-amber">
+        <rect x="230" y="366" width="220" height="50" rx="8"/>
+        <text class="th" x="340" y="387" text-anchor="middle" dominant-baseline="central">Aladdin</text>
+        <text class="ts" x="340" y="405" text-anchor="middle" dominant-baseline="central">DeepSeek · independent agent</text>
+      </g>
+      <line x1="340" y1="340" x2="340" y2="364" class="arr" stroke="#EF9F27" stroke-dasharray="5,3" marker-end="url(#arr1)"/>
+      <text class="ts" x="356" y="356" text-anchor="start">coexists</text>
+    </svg>
+    <div class="diagram-caption">Fig 1 — Multi-model routing architecture running entirely on an Android phone</div>
+  </div>
+
+  <div class="achievement">
+    <div class="ach-title">Multi-model routing layer</div>
+    <div class="ach-desc">A single Flask server on port 5000 routes requests to Gemini, Claude, and DeepSeek cloud APIs — plus a locally running Qwen3 4B model via llama.cpp. The local model handles queries entirely on-device with no internet dependency.</div>
+  </div>
+
+  <div class="achievement">
+    <div class="ach-title">Qwen3 4B running on-device via llama.cpp</div>
+    <div class="ach-desc">A 4-billion-parameter quantized model runs in Termux on the phone's CPU. No GPU, no cloud call, no cost per query. Responses are slower than cloud APIs but fully private and available offline — on 8 GB RAM.</div>
+  </div>
+
+  <div class="achievement">
+    <div class="ach-title">Two independent AI assistants, one device</div>
+    <div class="ach-desc">A separate assistant called Aladdin runs on DeepSeek alongside Bibhash AI — two AI agents coexisting on the same phone for different workflow roles.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Trading section -->
+  <h2>StockMind AI: a live trading scanner on GitHub Actions</h2>
+  <div class="section-sub">Algorithmic Trading Automation</div>
+
+  <p>The trading side of the system is where constraint-driven engineering gets most interesting. Running a continuous stock scanner with no always-on machine required rethinking what "infrastructure" means entirely. The solution: GitHub Actions as a cron-driven compute layer, with Git itself acting as the persistent state database.</p>
+
+  <div class="stat-row">
+    <div class="stat"><div class="stat-num">50</div><div class="stat-label">NSE stocks scanned</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-label">Global assets (BTC, ETH, Gold)</div></div>
+  </div>
+
+  <!-- Trading pipeline diagram -->
+  <div class="diagram-wrap">
+    <svg width="100%" viewBox="0 0 680 420" role="img">
+      <title>StockMind AI scanner pipeline</title>
+      <desc>Flowchart from GitHub Actions cron through scanner.py, PS-OODA and SMC engines, score filter at 8.0, then Telegram alerts and Git state commit.</desc>
+      <defs>
+        <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <!-- outer -->
+      <g class="box-gray">
+        <rect x="10" y="10" width="660" height="400" rx="16"/>
+        <text class="th" x="340" y="38" text-anchor="middle">StockMind AI — scanner pipeline</text>
+        <text class="ts" x="340" y="55" text-anchor="middle">GitHub Actions as free compute · GitOps state · Telegram control</text>
+      </g>
+      <!-- GitHub Actions -->
+      <g class="node box-gray">
+        <rect x="250" y="74" width="180" height="44" rx="8"/>
+        <text class="th" x="340" y="96" text-anchor="middle" dominant-baseline="central">GitHub Actions cron</text>
+      </g>
+      <line x1="340" y1="118" x2="340" y2="146" class="arr" marker-end="url(#arr2)"/>
+      <!-- scanner.py -->
+      <g class="node box-purple">
+        <rect x="200" y="146" width="280" height="50" rx="8"/>
+        <text class="th" x="340" y="165" text-anchor="middle" dominant-baseline="central">scanner.py — fetches market data</text>
+        <text class="ts" x="340" y="183" text-anchor="middle" dominant-baseline="central">pure Python · no pandas / no numpy</text>
+      </g>
+      <!-- fork arrows -->
+      <line x1="268" y1="196" x2="148" y2="236" class="arr" stroke="#7F77DD" marker-end="url(#arr2)"/>
+      <line x1="412" y1="196" x2="532" y2="236" class="arr" stroke="#7F77DD" marker-end="url(#arr2)"/>
+      <!-- PS-OODA -->
+      <g class="node box-blue">
+        <rect x="42" y="236" width="216" height="62" rx="8"/>
+        <text class="th" x="150" y="258" text-anchor="middle" dominant-baseline="central">PS-OODA v3</text>
+        <text class="ts" x="150" y="276" text-anchor="middle" dominant-baseline="central">50 NSE stocks</text>
+        <text class="ts" x="150" y="292" text-anchor="middle" dominant-baseline="central">7-component weighted score</text>
+      </g>
+      <!-- SMC -->
+      <g class="node box-teal">
+        <rect x="422" y="236" width="216" height="62" rx="8"/>
+        <text class="th" x="530" y="258" text-anchor="middle" dominant-baseline="central">SMC engine</text>
+        <text class="ts" x="530" y="276" text-anchor="middle" dominant-baseline="central">BTC · ETH · Gold (GC=F)</text>
+        <text class="ts" x="530" y="292" text-anchor="middle" dominant-baseline="central">BOS / OB / FVG / sweep</text>
+      </g>
+      <!-- merge arrows -->
+      <line x1="150" y1="298" x2="250" y2="326" class="arr" stroke="#378ADD" marker-end="url(#arr2)"/>
+      <line x1="530" y1="298" x2="430" y2="326" class="arr" stroke="#1D9E75" marker-end="url(#arr2)"/>
+      <!-- Score filter -->
+      <g class="node box-amber">
+        <rect x="210" y="326" width="260" height="50" rx="8"/>
+        <text class="th" x="340" y="346" text-anchor="middle" dominant-baseline="central">Score filter — threshold 8.0</text>
+        <text class="ts" x="340" y="364" text-anchor="middle" dominant-baseline="central">below 8.0 = discard · above = alert</text>
+      </g>
+      <!-- pass arrow -->
+      <line x1="470" y1="351" x2="520" y2="351" class="arr" stroke="#EF9F27" marker-end="url(#arr2)"/>
+      <!-- Telegram -->
+      <g class="node box-green">
+        <rect x="520" y="326" width="148" height="50" rx="8"/>
+        <text class="th" x="594" y="346" text-anchor="middle" dominant-baseline="central">Telegram alert</text>
+        <text class="ts" x="594" y="364" text-anchor="middle" dominant-baseline="central">/stats /open /pause</text>
+      </g>
+      <!-- discard arrow -->
+      <line x1="210" y1="351" x2="162" y2="351" class="arr" stroke="#888780" stroke-dasharray="5,3" marker-end="url(#arr2)"/>
+      <g class="node box-gray">
+        <rect x="42" y="326" width="120" height="50" rx="8"/>
+        <text class="th" x="102" y="346" text-anchor="middle" dominant-baseline="central">Discarded</text>
+        <text class="ts" x="102" y="364" text-anchor="middle" dominant-baseline="central">score &lt; 8.0</text>
+      </g>
+      <!-- git commit note -->
+      <text class="ts" x="340" y="394" text-anchor="middle">State committed back to Git · sent_state.json dedup · weekly adaptive tuner</text>
+    </svg>
+    <div class="diagram-caption">Fig 2 — StockMind AI pipeline from GitHub Actions cron to Telegram alerts</div>
+  </div>
+
+  <div class="achievement">
+    <div class="ach-title">PS-OODA v3 signal engine</div>
+    <div class="ach-desc">A 7-component weighted scoring model derived from a TradingView Pine Script indicator, fully ported to pure Python. Only signals scoring 8.0 or above are acted on — the 7.5–8.0 band was cut after historical analysis showed a 0% win rate in that range.</div>
+  </div>
+
+  <div class="achievement">
+    <div class="ach-title">Smart Money Concepts (SMC) engine</div>
+    <div class="ach-desc">A separate strategy module handles BTC, ETH, and Gold using SMC principles — swing points, market structure (HH/HL/LH/LL), Break of Structure, Order Blocks, Fair Value Gaps, and liquidity sweeps. All in pure Python, zero TA libraries.</div>
+  </div>
+
+  <div class="achievement">
+    <div class="ach-title">Telegram-native command interface</div>
+    <div class="ach-desc">The scanner doubles as a Telegram bot. Commands like /stats, /open, /best, /worst, /pause, and /resume let you query and control the live scanner in real time — from the same phone running the whole system.</div>
+  </div>
+
+  <div class="achievement">
+    <div class="ach-title">Self-adjusting learning + GitOps config</div>
+    <div class="ach-desc">A weekly adaptive tuner analyses trade outcomes and adjusts thresholds. Consecutive loss limits trigger auto-pause. Strategy parameters live in a committed config.json — updating a setting is a single git commit, no redeployment needed.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>The trading methodology underneath it all</h2>
+  <div class="section-sub">Framework</div>
+
+  <p>The signal engines aren't arbitrary. They're grounded in years of live XAUUSD and NSE equity trading using Smart Money Concepts — tracking institutional order flow, BOS/CHoCH patterns, and multi-timeframe confluence. The automation is built on top of a tested manual framework, not a backtested fantasy.</p>
+
+  <p>An adversarial audit of the historical trading journal identified premature fear-based exits as the primary profit leak. That finding is now baked directly into the signal logic — exits are rule-driven, not emotion-driven.</p>
+
+  <div class="divider"></div>
+
+  <h2>Study tools on the same stack</h2>
+  <div class="section-sub">CA Foundation</div>
+
+  <p>The same phone also hosts study tools for CA Foundation exam prep — a 110-question interactive quiz bank covering Indian Contract Act, Sale of Goods, Partnership, LLP, and Companies Act, built as a self-contained HTML file with no framework. Same constraint philosophy: zero dependencies, works offline, loads instantly on mobile.</p>
+
+  <div class="divider"></div>
+
+  <p>The full stack spans local AI inference, cloud API routing, live market scanning on free compute, Telegram-native control, and exam prep tooling — all maintained from a single Android device. No laptop required.</p>
+
+  <div class="outro">This is what happens when hardware limitations push you toward better engineering. Every constraint was a forcing function. Every workaround became a feature. The best code isn't the code written with the most resources — it's the code that survives without them.</div>
+
+</div>
+
+<div class="footer">
+  <p>Written by Bibhash &nbsp;·&nbsp; June 2026 &nbsp;·&nbsp; Bhubaneswar, India &nbsp;·&nbsp; All systems running on a Motorola Edge 20</p>
+</div>
+
+</body>
+</html>
