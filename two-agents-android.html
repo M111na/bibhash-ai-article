@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Running two AI agents on one Android phone &mdash; Termux multi-agent system</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3261356718330997" crossorigin="anonymous"></script>
+<style>body{margin:0;padding:16px;background:#fff}a{color:#1D9E75}</style>
+</head>
+<body>
+<meta charset="UTF-8">
+<style>
+.bai-wrap{font-family:Georgia,serif;max-width:720px;margin:0 auto;color:#1a1a18;line-height:1.7}
+.bai-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.bai-tag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;font-family:monospace}
+.bai-t1{background:#E1F5EE;color:#0F6E56}
+.bai-t2{background:#E6F1FB;color:#185FA5}
+.bai-t3{background:#FAEEDA;color:#854F0B}
+.bai-t4{background:#EEEDFE;color:#3C3489}
+.bai-h1{font-size:28px;font-weight:900;line-height:1.2;margin-bottom:12px}
+.bai-by{font-size:13px;color:#5c5b56;font-family:monospace;margin-bottom:4px}
+.bai-date{font-size:12px;color:#9a9890;font-family:monospace;margin-bottom:20px}
+.bai-deck{font-size:16px;color:#5c5b56;font-style:italic;border-left:3px solid #1D9E75;padding-left:14px;margin-bottom:24px}
+.bai-div{height:1px;background:#e0ddd6;margin:28px 0}
+.bai-h2{font-size:21px;font-weight:700;margin:32px 0 4px}
+.bai-sub{font-size:11px;color:#9a9890;font-family:monospace;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.bai-spec{background:#f6f5f1;border-radius:10px;border:1px solid #e0ddd6;padding:12px 16px;margin:14px 0}
+.bai-srow{display:flex;gap:10px;padding:5px 0;font-size:14px;border-bottom:1px solid #e0ddd6}
+.bai-srow:last-child{border:none}
+.bai-slabel{color:#9a9890;min-width:140px;font-family:monospace;font-size:12px;flex-shrink:0}
+.bai-callout{background:#FAEEDA;border-left:3px solid #EF9F27;border-radius:0 8px 8px 0;padding:12px 16px;margin:18px 0;font-size:14px}
+.bai-callout-blue{background:#E6F1FB;border-left:3px solid #185FA5;border-radius:0 8px 8px 0;padding:12px 16px;margin:18px 0;font-size:14px}
+.bai-callout-green{background:#E1F5EE;border-left:3px solid #1D9E75;border-radius:0 8px 8px 0;padding:12px 16px;margin:18px 0;font-size:14px}
+.bai-callout-purple{background:#EEEDFE;border-left:3px solid #7F77DD;border-radius:0 8px 8px 0;padding:12px 16px;margin:18px 0;font-size:14px}
+.bai-ach{background:#fff;border:1px solid #e0ddd6;border-radius:10px;padding:12px 16px;margin:10px 0}
+.bai-atitle{font-weight:700;font-size:14px;margin-bottom:6px;font-family:monospace}
+.bai-adesc{font-size:14px;color:#5c5b56;line-height:1.55}
+.bai-code{background:#1a1a18;color:#e8e6df;border-radius:8px;padding:14px 16px;font-family:monospace;font-size:13px;margin:14px 0;overflow-x:auto;line-height:1.6}
+.bai-code .c{color:#9a9890}
+.bai-code .k{color:#5DCAA5}
+.bai-code .s{color:#FAC775}
+.bai-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+.bai-col{border-radius:8px;padding:12px 14px;font-size:13px}
+.bai-col-a{background:#E1F5EE;border:1px solid #1D9E75}
+.bai-col-b{background:#EEEDFE;border:1px solid #7F77DD}
+.bai-col-title{font-weight:700;font-family:monospace;font-size:12px;margin-bottom:8px}
+.bai-col-a .bai-col-title{color:#0F6E56}
+.bai-col-b .bai-col-title{color:#3C3489}
+.bai-col li{margin-bottom:4px;color:#5c5b56;list-style:none;padding-left:0}
+.bai-col li::before{content:"- ";color:#9a9890}
+.bai-outro{font-size:14px;color:#5c5b56;font-style:italic;border-top:1px solid #e0ddd6;padding-top:20px;margin-top:28px}
+.bai-agent{border-radius:10px;padding:14px 18px;margin:12px 0}
+.bai-agent-a{background:#E1F5EE;border:1px solid #1D9E75}
+.bai-agent-b{background:#EEEDFE;border:1px solid #7F77DD}
+.bai-agent-name{font-weight:700;font-family:monospace;font-size:15px;margin-bottom:6px}
+.bai-agent-a .bai-agent-name{color:#0F6E56}
+.bai-agent-b .bai-agent-name{color:#3C3489}
+.bai-agent-desc{font-size:14px;color:#5c5b56;line-height:1.55}
+.bai-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}
+.bai-stat{background:#f6f5f1;border-radius:8px;padding:12px;text-align:center}
+.bai-snum{font-size:26px;font-weight:900;color:#1a1a18}
+.bai-slbl{font-size:11px;color:#9a9890;font-family:monospace;text-transform:uppercase;margin-top:4px}
+</style>
+
+<div class="bai-wrap">
+
+<div class="bai-tags">
+<span class="bai-tag bai-t1">AI Agents</span>
+<span class="bai-tag bai-t2">Android</span>
+<span class="bai-tag bai-t3">Termux</span>
+<span class="bai-tag bai-t4">Multi-Agent</span>
+</div>
+
+<div class="bai-h1">Running two AI agents on one Android phone &mdash; how I built a multi-agent system in Termux</div>
+<div class="bai-by">By Bibhash &mdash; Independent Developer &amp; Algorithmic Trader</div>
+<div class="bai-date">June 2026 &nbsp;&middot;&nbsp; Bhubaneswar, India</div>
+
+<div class="bai-deck">Most multi-agent tutorials assume you have a server farm. I have a phone. Here is how I run two independent AI agents simultaneously &mdash; each with its own purpose, memory, and API backend &mdash; on a single Android device.</div>
+
+<p>The phrase "multi-agent AI system" tends to conjure images of cloud infrastructure, orchestration frameworks, and GPU clusters. AutoGen, CrewAI, LangGraph &mdash; these tools are powerful, but they are built for machines with real compute budgets.</p>
+
+<p>My setup is different. Everything runs on a Motorola Edge 20 &mdash; 8 GB RAM, ARM64, Termux. And on that single device, two separate AI agents run simultaneously, each handling a completely different domain. One is a general-purpose assistant. The other is a specialised trading and research agent. They never talk to each other. They do not need to. They just run.</p>
+
+<p>This is how I built it, and how you can too.</p>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">The two agents</div>
+<div class="bai-sub">Architecture overview</div>
+
+<div class="bai-agent bai-agent-a">
+<div class="bai-agent-name">Bibhash AI &mdash; General assistant</div>
+<div class="bai-agent-desc">A Flask middleware on port 5000 routing queries to multiple backends: Gemini, Claude, DeepSeek via cloud APIs, and a locally running Qwen3 4B model via llama.cpp on port 8080. Handles general chat, code help, document analysis, and offline tasks. The local model handles anything that should not leave the device.</div>
+</div>
+
+<div class="bai-agent bai-agent-b">
+<div class="bai-agent-name">Aladdin &mdash; Trading and research agent</div>
+<div class="bai-agent-desc">A standalone Python bot running independently on DeepSeek. Handles market research queries, trade analysis, and strategy reasoning. Runs as a separate process with its own context and memory. Completely isolated from Bibhash AI &mdash; different purpose, different backend, different process.</div>
+</div>
+
+<div class="bai-callout"><strong>Key design principle:</strong> These agents are not orchestrated &mdash; they do not pass tasks to each other. They are independent processes serving different roles. This is intentional. Isolation means one agent crashing or being slow does not affect the other.</div>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">Why two agents instead of one?</div>
+<div class="bai-sub">Design rationale</div>
+
+<p>The natural question is: why not just use one agent for everything and switch the system prompt?</p>
+
+<p>A few reasons shaped this decision:</p>
+
+<div class="bai-ach">
+<div class="bai-atitle">Context separation</div>
+<div class="bai-adesc">A trading research session needs clean context &mdash; no noise from earlier general chat. Aladdin starts every session focused on markets. Bibhash AI handles everything else. Mixing them pollutes both.</div>
+</div>
+
+<div class="bai-ach">
+<div class="bai-atitle">Different backends, different strengths</div>
+<div class="bai-adesc">DeepSeek handles financial reasoning and data analysis particularly well. Gemini handles long documents and multimodal tasks better. Having two agents lets each use the backend it is best suited for.</div>
+</div>
+
+<div class="bai-ach">
+<div class="bai-atitle">Process isolation</div>
+<div class="bai-adesc">If the trading agent hits an API rate limit or crashes, the general assistant keeps running. They are separate OS processes &mdash; one dying does not kill the other.</div>
+</div>
+
+<div class="bai-ach">
+<div class="bai-atitle">Independent memory</div>
+<div class="bai-adesc">Each agent maintains its own conversation history and state. Aladdin can remember that you are watching a particular stock setup without that context bleeding into a completely unrelated coding question on Bibhash AI.</div>
+</div>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">The process architecture</div>
+<div class="bai-sub">How it runs on one device</div>
+
+<p>On Android with Termux, each agent is simply a Python process. The operating system handles scheduling between them &mdash; same as any Linux system running multiple services. Here is what is running simultaneously:</p>
+
+<div class="bai-spec">
+<div class="bai-srow"><span class="bai-slabel">Port 8080</span><span>llama.cpp server &mdash; Qwen3 4B local model (CPU inference)</span></div>
+<div class="bai-srow"><span class="bai-slabel">Port 5000</span><span>Bibhash AI Flask middleware &mdash; multi-model router</span></div>
+<div class="bai-srow"><span class="bai-slabel">Background</span><span>Aladdin bot &mdash; polling Telegram + DeepSeek API</span></div>
+<div class="bai-srow"><span class="bai-slabel">Background</span><span>StockMind scanner &mdash; runs on GitHub Actions (free compute)</span></div>
+</div>
+
+<div class="bai-stats">
+<div class="bai-stat"><div class="bai-snum">4</div><div class="bai-slbl">Processes running</div></div>
+<div class="bai-stat"><div class="bai-snum">8 GB</div><div class="bai-slbl">Total RAM</div></div>
+<div class="bai-stat"><div class="bai-snum">~3.8 GB</div><div class="bai-slbl">RAM in use</div></div>
+</div>
+
+<p>The local LLM uses about 3.2 GB of RAM. Flask middleware and the Aladdin bot together use under 400 MB. Android's own overhead takes another ~1.5 GB. On 8 GB total, everything fits with room to spare.</p>
+
+<div class="bai-callout-blue"><strong>On 4 GB RAM devices:</strong> Skip the local llama.cpp model and route everything to cloud APIs. The Flask middleware and Aladdin bot together use under 400 MB &mdash; they will run fine. You lose the offline/private model but keep the dual-agent architecture.</div>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">Building the general assistant &mdash; Bibhash AI</div>
+<div class="bai-sub">Agent 1</div>
+
+<p>The general assistant is a Flask server that routes incoming requests to the right backend based on a mode parameter. Here is a simplified version of the core routing logic:</p>
+
+<div class="bai-code">
+<span class="k">from</span> flask <span class="k">import</span> Flask, request, jsonify<br>
+<span class="k">import</span> requests, os<br><br>
+app = Flask(__name__)<br><br>
+BACKENDS = {<br>
+&nbsp;&nbsp;<span class="s">"gemini"</span>: <span class="s">"https://generativelanguage.googleapis.com/..."</span>,<br>
+&nbsp;&nbsp;<span class="s">"deepseek"</span>: <span class="s">"https://api.deepseek.com/v1/chat/completions"</span>,<br>
+&nbsp;&nbsp;<span class="s">"claude"</span>: <span class="s">"https://api.anthropic.com/v1/messages"</span>,<br>
+&nbsp;&nbsp;<span class="s">"local"</span>: <span class="s">"http://localhost:8080/v1/chat/completions"</span><br>
+}<br><br>
+@app.route(<span class="s">"/chat"</span>, methods=[<span class="s">"POST"</span>])<br>
+<span class="k">def</span> chat():<br>
+&nbsp;&nbsp;data = request.json<br>
+&nbsp;&nbsp;mode = data.get(<span class="s">"mode"</span>, <span class="s">"gemini"</span>)<br>
+&nbsp;&nbsp;url = BACKENDS.get(mode, BACKENDS[<span class="s">"gemini"</span>])<br>
+&nbsp;&nbsp;r = requests.post(url, json=data, timeout=60)<br>
+&nbsp;&nbsp;<span class="k">return</span> jsonify(r.json())<br><br>
+<span class="k">if</span> __name__ == <span class="s">"__main__"</span>:<br>
+&nbsp;&nbsp;app.run(host=<span class="s">"0.0.0.0"</span>, port=5000)
+</div>
+
+<p>The UI is a single HTML file that sends requests to this Flask server. Switching between models is just changing the mode value in the request &mdash; no restarts, no config changes.</p>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">Building the trading agent &mdash; Aladdin</div>
+<div class="bai-sub">Agent 2</div>
+
+<p>Aladdin is a Telegram-native bot. Instead of a web UI, all interaction happens through Telegram messages. This is intentional &mdash; on a phone, Telegram is already open. No need to switch apps or open a browser.</p>
+
+<div class="bai-code">
+<span class="k">import</span> os, requests, time<br><br>
+TG_TOKEN = os.environ[<span class="s">"TG_TOKEN"</span>]<br>
+DS_KEY = os.environ[<span class="s">"DEEPSEEK_KEY"</span>]<br>
+CHAT_ID = os.environ[<span class="s">"TG_CHAT_ID"</span>]<br>
+offset = 0<br><br>
+SYSTEM = (<span class="s">"You are Aladdin, a professional trading and market "</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"research assistant. Be concise and data-focused."</span>)<br><br>
+<span class="k">def</span> ask_deepseek(user_msg):<br>
+&nbsp;&nbsp;r = requests.post(<span class="s">"https://api.deepseek.com/v1/chat/completions"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;headers={<span class="s">"Authorization"</span>: <span class="s">f"Bearer {DS_KEY}"</span>},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;json={<span class="s">"model"</span>: <span class="s">"deepseek-chat"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"messages"</span>: [{<span class="s">"role"</span>:<span class="s">"system"</span>,<span class="s">"content"</span>:SYSTEM},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="s">"role"</span>:<span class="s">"user"</span>,<span class="s">"content"</span>:user_msg}]},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;timeout=30)<br>
+&nbsp;&nbsp;<span class="k">return</span> r.json()[<span class="s">"choices"</span>][0][<span class="s">"message"</span>][<span class="s">"content"</span>]<br><br>
+<span class="k">def</span> poll():<br>
+&nbsp;&nbsp;<span class="k">global</span> offset<br>
+&nbsp;&nbsp;<span class="k">while True</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;r = requests.get(<span class="s">f"https://api.telegram.org/bot{TG_TOKEN}/getUpdates"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;params={<span class="s">"offset"</span>:offset,<span class="s">"timeout"</span>:20}, timeout=25)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">for</span> u <span class="k">in</span> r.json().get(<span class="s">"result"</span>,[]):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;offset = u[<span class="s">"update_id"</span>] + 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;msg = u.get(<span class="s">"message"</span>,{}).get(<span class="s">"text"</span>,<span class="s">""</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">if</span> msg:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;reply = ask_deepseek(msg)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;requests.post(<span class="s">f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;json={<span class="s">"chat_id"</span>:CHAT_ID,<span class="s">"text"</span>:reply})<br><br>
+poll()
+</div>
+
+<p>Aladdin runs as a long-polling Telegram bot. No webhook, no server exposure &mdash; just an outbound poll every 20 seconds. Zero infrastructure requirements beyond the phone itself.</p>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">The startup script &mdash; launching everything at once</div>
+<div class="bai-sub">Automation</div>
+
+<p>Both agents launch from a single bash script. Opening Termux and running one command brings the entire system online:</p>
+
+<div class="bai-code">
+<span class="c">#!/data/data/com.termux/files/usr/bin/bash</span><br>
+<span class="c"># start_ai.sh &mdash; launch all agents</span><br><br>
+<span class="c"># Check if already running &mdash; avoid duplicate processes</span><br>
+<span class="k">if</span> ! pgrep -f "llama-server" > /dev/null; <span class="k">then</span><br>
+&nbsp;&nbsp;nohup ~/llama.cpp/build/bin/llama-server \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-m ~/models/qwen3-4b.gguf \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--port 8080 -c 2048 -t 4 \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;--n-gpu-layers 0 &gt; ~/logs/llm.log 2&gt;&amp;1 &amp;<br>
+&nbsp;&nbsp;echo "LLM started on :8080"<br>
+<span class="k">else</span><br>
+&nbsp;&nbsp;echo "LLM already running"<br>
+<span class="k">fi</span><br><br>
+<span class="k">if</span> ! pgrep -f "middleware.py" > /dev/null; <span class="k">then</span><br>
+&nbsp;&nbsp;nohup python ~/middleware.py &gt; ~/logs/middleware.log 2&gt;&amp;1 &amp;<br>
+&nbsp;&nbsp;echo "Bibhash AI started on :5000"<br>
+<span class="k">else</span><br>
+&nbsp;&nbsp;echo "Bibhash AI already running"<br>
+<span class="k">fi</span><br><br>
+<span class="k">if</span> ! pgrep -f "aladdin_bot.py" > /dev/null; <span class="k">then</span><br>
+&nbsp;&nbsp;nohup python ~/aladdin_bot.py &gt; ~/logs/aladdin.log 2&gt;&amp;1 &amp;<br>
+&nbsp;&nbsp;echo "Aladdin started"<br>
+<span class="k">else</span><br>
+&nbsp;&nbsp;echo "Aladdin already running"<br>
+<span class="k">fi</span><br><br>
+echo "=== All agents online ==="
+</div>
+
+<div class="bai-callout-green"><strong>The pgrep check is critical.</strong> Without it, opening a new Termux session and re-running the script would spawn duplicate processes &mdash; two copies of Aladdin both responding to every Telegram message, two Flask servers fighting over port 5000. Always check before launching.</div>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">Monitoring both agents</div>
+<div class="bai-sub">Health checks</div>
+
+<p>Keeping track of two background processes on a phone requires a lightweight status check. Add this to your startup script output or run it any time:</p>
+
+<div class="bai-code">
+<span class="c"># Quick status check</span><br>
+echo "=== Agent Status ==="<br>
+pgrep -f "llama-server" &gt; /dev/null &amp;&amp; echo "LLM     : [OK]" || echo "LLM     : [DOWN]"<br>
+pgrep -f "middleware.py" &gt; /dev/null &amp;&amp; echo "BibhashAI: [OK]" || echo "BibhashAI: [DOWN]"<br>
+pgrep -f "aladdin_bot" &gt; /dev/null &amp;&amp; echo "Aladdin : [OK]" || echo "Aladdin : [DOWN]"<br>
+echo "RAM used: $(free -m | awk '/Mem/{print $3}') MB"
+</div>
+
+<p>This is exactly what you see in the Termux startup banner &mdash; a quick confirmation that everything is running before you start your day.</p>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">What makes this different from typical multi-agent frameworks</div>
+<div class="bai-sub">Comparison</div>
+
+<div class="bai-compare">
+<div class="bai-col bai-col-a">
+<div class="bai-col-title">This approach (Termux)</div>
+<ul>
+<li>Plain Python processes</li>
+<li>No orchestration framework</li>
+<li>Agents are fully isolated</li>
+<li>Runs on 8 GB phone RAM</li>
+<li>Zero cloud infrastructure</li>
+<li>Single bash script to launch</li>
+<li>Survives phone restarts</li>
+</ul>
+</div>
+<div class="bai-col bai-col-b">
+<div class="bai-col-title">AutoGen / CrewAI / LangGraph</div>
+<ul>
+<li>Framework-managed agents</li>
+<li>Built-in orchestration</li>
+<li>Agents can pass tasks</li>
+<li>Needs 16 GB+ RAM typically</li>
+<li>Often requires cloud deploy</li>
+<li>Complex setup and config</li>
+<li>Heavier dependencies</li>
+</ul>
+</div>
+</div>
+
+<p>The framework approach is better for complex agent-to-agent pipelines where one agent's output feeds another. For two independent specialists running in parallel &mdash; serving different purposes, different users, different contexts &mdash; plain processes are simpler, lighter, and more reliable.</p>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">Common problems and fixes</div>
+<div class="bai-sub">Troubleshooting</div>
+
+<div class="bai-ach">
+<div class="bai-atitle">Aladdin not responding after phone sleep</div>
+<div class="bai-adesc">Android aggressively kills background processes to save battery. Install <strong>Termux:Boot</strong> from F-Droid and place your startup script in <code>~/.termux/boot/</code> to auto-relaunch on wake. Also disable battery optimisation for Termux in Android settings.</div>
+</div>
+
+<div class="bai-ach">
+<div class="bai-atitle">Port 5000 already in use on restart</div>
+<div class="bai-adesc">The pgrep check handles this &mdash; but if a zombie process holds the port, run: <code>kill $(lsof -ti:5000)</code> before restarting.</div>
+</div>
+
+<div class="bai-ach">
+<div class="bai-atitle">Both agents slow when LLM is running inference</div>
+<div class="bai-adesc">The local LLM uses all CPU threads during inference. Set <code>-t 2</code> instead of <code>-t 4</code> in llama-server to leave cores free for other processes. Response will be slower but the system stays responsive.</div>
+</div>
+
+<div class="bai-ach">
+<div class="bai-atitle">Logs growing too large</div>
+<div class="bai-adesc">Add log rotation: <code>nohup python middleware.py 2&gt;&amp;1 | tail -c 1M &gt; ~/logs/middleware.log &amp;</code> or simply truncate logs weekly with a cron job.</div>
+</div>
+
+<div class="bai-div"></div>
+
+<p>Two AI agents, one phone, 8 GB of RAM. No cloud infrastructure. No orchestration framework. No monthly server bill. The system has been running daily since it was built &mdash; handling general questions on one agent while monitoring markets and answering research queries on the other.</p>
+
+<p>The real insight is not the technology. It is the design decision: keep agents independent, keep them simple, and let the operating system do the scheduling. That approach scales down to a phone just as well as it scales up to a server.</p>
+
+<div class="bai-outro">Every system that runs reliably does so because someone resisted the urge to make it more complex than it needed to be. Two processes, two purposes, one phone. That is enough.</div>
+
+<br>
+<div style="background:#f6f5f1;border-radius:10px;padding:14px 18px;margin-top:20px;font-size:13px;font-family:monospace;">
+<strong>Related articles on this blog:</strong><br>
+&bull; <a href="index.html" style="color:#1D9E75;">I built a full AI infrastructure and trading system on an Android phone</a><br>
+&bull; <a href="llama-cpp-android.html" style="color:#1D9E75;">I ran a local LLM on Android without any SDK &mdash; just Termux and llama.cpp</a>
+</div>
+
+</div>
+
+<div style="text-align:center;font-family:monospace;font-size:12px;color:#9a9890;padding:20px 0;border-top:1px solid #e0ddd6;margin-top:20px;">
+&larr; <a href="index.html">Article 1</a> &nbsp;&middot;&nbsp;
+<a href="llama-cpp-android.html">Article 2</a> &nbsp;&middot;&nbsp;
+Bibhash AI Lab &nbsp;&middot;&nbsp; June 2026
+</div>
+</body>
+</html>
