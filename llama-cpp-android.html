@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I ran a local LLM on Android without any SDK - just Termux and llama.cpp</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3261356718330997" crossorigin="anonymous"></script>
+<style>
+body { margin: 0; padding: 16px; background: #fff; }
+a { color: #1D9E75; }
+</style>
+</head>
+<body>
+<meta charset="UTF-8">
+<style>
+.bai-wrap{font-family:Georgia,serif;max-width:720px;margin:0 auto;color:#1a1a18;line-height:1.7}
+.bai-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.bai-tag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;font-family:monospace}
+.bai-t1{background:#E1F5EE;color:#0F6E56}
+.bai-t2{background:#E6F1FB;color:#185FA5}
+.bai-t3{background:#FAEEDA;color:#854F0B}
+.bai-t4{background:#EEEDFE;color:#3C3489}
+.bai-h1{font-size:28px;font-weight:900;line-height:1.2;margin-bottom:12px}
+.bai-by{font-size:13px;color:#5c5b56;font-family:monospace;margin-bottom:4px}
+.bai-date{font-size:12px;color:#9a9890;font-family:monospace;margin-bottom:20px}
+.bai-deck{font-size:16px;color:#5c5b56;font-style:italic;border-left:3px solid #1D9E75;padding-left:14px;margin-bottom:24px}
+.bai-div{height:1px;background:#e0ddd6;margin:28px 0}
+.bai-h2{font-size:21px;font-weight:700;margin:32px 0 4px}
+.bai-sub{font-size:11px;color:#9a9890;font-family:monospace;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.bai-spec{background:#f6f5f1;border-radius:10px;border:1px solid #e0ddd6;padding:12px 16px;margin:14px 0}
+.bai-srow{display:flex;gap:10px;padding:5px 0;font-size:14px;border-bottom:1px solid #e0ddd6}
+.bai-srow:last-child{border:none}
+.bai-slabel{color:#9a9890;min-width:140px;font-family:monospace;font-size:12px;flex-shrink:0}
+.bai-callout{background:#FAEEDA;border-left:3px solid #EF9F27;border-radius:0 8px 8px 0;padding:12px 16px;margin:18px 0;font-size:14px}
+.bai-callout-blue{background:#E6F1FB;border-left:3px solid #185FA5;border-radius:0 8px 8px 0;padding:12px 16px;margin:18px 0;font-size:14px}
+.bai-callout-green{background:#E1F5EE;border-left:3px solid #1D9E75;border-radius:0 8px 8px 0;padding:12px 16px;margin:18px 0;font-size:14px}
+.bai-ach{background:#fff;border:1px solid #e0ddd6;border-radius:10px;padding:12px 16px;margin:10px 0}
+.bai-atitle{font-weight:700;font-size:14px;margin-bottom:6px;font-family:monospace}
+.bai-adesc{font-size:14px;color:#5c5b56;line-height:1.55}
+.bai-code{background:#1a1a18;color:#e8e6df;border-radius:8px;padding:14px 16px;font-family:monospace;font-size:13px;margin:14px 0;overflow-x:auto;line-height:1.6}
+.bai-code .c{color:#9a9890}
+.bai-code .k{color:#5DCAA5}
+.bai-code .s{color:#FAC775}
+.bai-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+.bai-col{border-radius:8px;padding:12px 14px;font-size:13px}
+.bai-col-them{background:#f6f5f1;border:1px solid #e0ddd6}
+.bai-col-you{background:#E1F5EE;border:1px solid #1D9E75}
+.bai-col-title{font-weight:700;font-family:monospace;font-size:12px;margin-bottom:8px}
+.bai-col-them .bai-col-title{color:#5c5b56}
+.bai-col-you .bai-col-title{color:#0F6E56}
+.bai-col li{margin-bottom:4px;color:#5c5b56;list-style:none;padding-left:0}
+.bai-col li::before{content:"- ";color:#9a9890}
+.bai-outro{font-size:14px;color:#5c5b56;font-style:italic;border-top:1px solid #e0ddd6;padding-top:20px;margin-top:28px}
+.bai-step{display:flex;gap:12px;margin:10px 0;align-items:flex-start}
+.bai-stepnum{background:#1a1a18;color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px}
+.bai-stepcontent{flex:1;font-size:14px;color:#1a1a18}
+</style>
+
+<div class="bai-wrap">
+
+<div class="bai-tags">
+<span class="bai-tag bai-t1">Local LLM</span>
+<span class="bai-tag bai-t2">Termux</span>
+<span class="bai-tag bai-t3">llama.cpp</span>
+<span class="bai-tag bai-t4">No SDK</span>
+</div>
+
+<div class="bai-h1">I ran a local LLM on Android without any SDK &mdash; just Termux and llama.cpp</div>
+<div class="bai-by">By Bibhash &mdash; Independent Developer &amp; Algorithmic Trader</div>
+<div class="bai-date">June 2026 &nbsp;&middot;&nbsp; Bhubaneswar, India</div>
+
+<div class="bai-deck">No React Native. No Expo. No npm. No build machine. Just a terminal emulator, a compiler, and an Android phone with 8 GB of RAM.</div>
+
+<p>A recent freeCodeCamp article walked through running a local LLM on Android using QVAC and Expo. It is a solid approach &mdash; clean SDK, good abstractions, React Native frontend. But it assumes you have a development machine to run the Expo build pipeline.</p>
+
+<p>I do not have that. My entire setup lives on a Motorola Edge 20 running Termux. No laptop, no desktop, no external tools. So when I wanted a local LLM running on my phone, I had to go one level deeper &mdash; compile llama.cpp directly on the device, from source, on ARM64.</p>
+
+<p>This is that story. And a guide so you can do it too.</p>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">Why not just use QVAC or a similar SDK?</div>
+<div class="bai-sub">The constraint</div>
+
+<p>SDKs like QVAC are excellent when you have a build environment. They abstract away the hard parts &mdash; native compilation, memory mapping, hardware targeting. But they require npm, Expo, and a prebuild step that produces native binaries for Android or iOS.</p>
+
+<p>On a phone-only setup, that pipeline simply does not work. Expo prebuild needs Node.js tooling that expects x86. Cross-compilation on ARM64 Termux for React Native targets is practically unsupported.</p>
+
+<div class="bai-callout"><strong>The key insight:</strong> llama.cpp is a C++ project that compiles natively on aarch64. Termux ships a full clang toolchain. That means you can build and run llama.cpp directly on your phone &mdash; no cross-compilation, no SDK, no laptop.</div>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">What you need</div>
+<div class="bai-sub">Requirements</div>
+
+<div class="bai-spec">
+<div class="bai-srow"><span class="bai-slabel">Device</span><span>Any Android phone with 4 GB+ RAM (8 GB recommended)</span></div>
+<div class="bai-srow"><span class="bai-slabel">Architecture</span><span>aarch64 (ARM64) &mdash; all modern Android phones</span></div>
+<div class="bai-srow"><span class="bai-slabel">App</span><span>Termux (from F-Droid &mdash; not Play Store version)</span></div>
+<div class="bai-srow"><span class="bai-slabel">Storage</span><span>3&ndash;5 GB free for model + build files</span></div>
+<div class="bai-srow"><span class="bai-slabel">Model</span><span>Any GGUF quantized model (Q4_K_M recommended)</span></div>
+<div class="bai-srow"><span class="bai-slabel">Internet</span><span>Only needed for initial setup &mdash; runs fully offline after</span></div>
+</div>
+
+<div class="bai-callout-blue"><strong>Important:</strong> Install Termux from F-Droid, not the Google Play Store. The Play Store version is outdated and packages will fail to install.</div>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">Step 1 &mdash; Set up Termux</div>
+<div class="bai-sub">Environment</div>
+
+<p>Open Termux and run the following to update packages and grant storage access:</p>
+
+<div class="bai-code">
+pkg update &amp;&amp; pkg upgrade -y<br>
+termux-setup-storage<br>
+pkg install -y clang cmake git wget python
+</div>
+
+<p>This installs the full build toolchain &mdash; clang compiler, cmake build system, git for cloning, and Python for the server wrapper later.</p>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">Step 2 &mdash; Clone and compile llama.cpp</div>
+<div class="bai-sub">Build</div>
+
+<p>Clone the llama.cpp repository and build it natively on your device:</p>
+
+<div class="bai-code">
+git clone https://github.com/ggerganov/llama.cpp<br>
+cd llama.cpp<br>
+mkdir build &amp;&amp; cd build<br>
+cmake .. -DLLAMA_NATIVE=ON<br>
+make -j$(nproc)
+</div>
+
+<p>The <code>-DLLAMA_NATIVE=ON</code> flag tells cmake to optimise for your exact CPU &mdash; important on ARM64 to get the best performance. The <code>-j$(nproc)</code> flag uses all available cores to speed up compilation.</p>
+
+<p>This will take 10&ndash;20 minutes on a phone CPU. That is normal. Let it run.</p>
+
+<div class="bai-callout"><strong>If compilation fails:</strong> Try <code>make -j2</code> instead to reduce memory pressure. Some phones with 4 GB RAM struggle with parallel compilation.</div>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">Step 3 &mdash; Download a model</div>
+<div class="bai-sub">Model</div>
+
+<p>You need a GGUF format quantized model. The Q4_K_M quantization gives the best balance of quality and RAM usage. For a phone with 8 GB RAM, a 4B parameter model works well.</p>
+
+<p>Good starting models from Hugging Face:</p>
+
+<div class="bai-ach">
+<div class="bai-atitle">Qwen3 4B Q4_K_M (~2.6 GB)</div>
+<div class="bai-adesc">Excellent reasoning, multilingual, fast on ARM64. This is what runs in my daily setup. Good for chat, code, and general Q&amp;A.</div>
+</div>
+
+<div class="bai-ach">
+<div class="bai-atitle">Gemma 3 2B Q4_K_M (~1.5 GB)</div>
+<div class="bai-adesc">Lighter, faster, good for 4 GB RAM devices. Less capable than Qwen3 4B but very responsive.</div>
+</div>
+
+<div class="bai-ach">
+<div class="bai-atitle">Phi-3.5 Mini Q4_K_M (~2.2 GB)</div>
+<div class="bai-adesc">Microsoft's small model, surprisingly capable for its size. Good at instruction following.</div>
+</div>
+
+<p>Download directly in Termux:</p>
+
+<div class="bai-code">
+<span class="c"># Create a models directory</span><br>
+mkdir -p ~/models<br>
+cd ~/models<br><br>
+<span class="c"># Download Qwen3 4B (replace URL with your chosen model's direct link)</span><br>
+wget -c "https://huggingface.co/&lt;model-path&gt;/model.Q4_K_M.gguf" -O qwen3-4b.gguf
+</div>
+
+<p>The <code>-c</code> flag enables resume &mdash; if your download is interrupted, run the same command again and it picks up where it stopped.</p>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">Step 4 &mdash; Run the model as a local server</div>
+<div class="bai-sub">Inference server</div>
+
+<p>llama.cpp ships a built-in HTTP server called <code>llama-server</code>. This exposes an OpenAI-compatible API on localhost, meaning any app or script that talks to the OpenAI API format works with it instantly.</p>
+
+<div class="bai-code">
+~/llama.cpp/build/bin/llama-server \<br>
+&nbsp;&nbsp;-m ~/models/qwen3-4b.gguf \<br>
+&nbsp;&nbsp;--host 0.0.0.0 \<br>
+&nbsp;&nbsp;--port 8080 \<br>
+&nbsp;&nbsp;-c 2048 \<br>
+&nbsp;&nbsp;-t 4 \<br>
+&nbsp;&nbsp;--n-gpu-layers 0
+</div>
+
+<p>Flag breakdown:</p>
+
+<div class="bai-spec">
+<div class="bai-srow"><span class="bai-slabel">-m</span><span>Path to your GGUF model file</span></div>
+<div class="bai-srow"><span class="bai-slabel">--port 8080</span><span>Port to serve the API on</span></div>
+<div class="bai-srow"><span class="bai-slabel">-c 2048</span><span>Context window size &mdash; reduce to 1024 if RAM is tight</span></div>
+<div class="bai-srow"><span class="bai-slabel">-t 4</span><span>Number of CPU threads &mdash; match your phone's core count</span></div>
+<div class="bai-srow"><span class="bai-slabel">--n-gpu-layers 0</span><span>Keep at 0 &mdash; phone GPUs are not supported by llama.cpp</span></div>
+</div>
+
+<p>Once running, test it from a second Termux session:</p>
+
+<div class="bai-code">
+curl http://localhost:8080/v1/chat/completions \<br>
+&nbsp;&nbsp;-H "Content-Type: application/json" \<br>
+&nbsp;&nbsp;-d '{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"model": "local",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"messages": [{"role":"user","content":"Hello, are you running locally?"}]<br>
+&nbsp;&nbsp;}'
+</div>
+
+<p>You should see a JSON response with the model's reply &mdash; entirely generated on your phone's CPU, no internet, no API key.</p>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">Step 5 &mdash; Build a Python middleware layer</div>
+<div class="bai-sub">Integration</div>
+
+<p>A raw llama-server is useful, but wrapping it in a Flask middleware lets you route between the local model and cloud APIs, add logging, and serve a web UI &mdash; all from one process.</p>
+
+<div class="bai-code">
+pip install flask requests<br><br>
+<span class="c"># middleware.py</span><br>
+<span class="k">from</span> flask <span class="k">import</span> Flask, request, jsonify<br>
+<span class="k">import</span> requests<br><br>
+app = Flask(__name__)<br>
+LOCAL_URL = <span class="s">"http://localhost:8080/v1/chat/completions"</span><br><br>
+@app.route(<span class="s">"/chat"</span>, methods=[<span class="s">"POST"</span>])<br>
+<span class="k">def</span> chat():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data = request.json<br>
+&nbsp;&nbsp;&nbsp;&nbsp;r = requests.post(LOCAL_URL, json=data, timeout=60)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> jsonify(r.json())<br><br>
+<span class="k">if</span> __name__ == <span class="s">"__main__"</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;app.run(host=<span class="s">"0.0.0.0"</span>, port=<span class="s">5000</span>)
+</div>
+
+<div class="bai-callout-green"><strong>Tip:</strong> Use <code>nohup python middleware.py &amp;</code> to keep the middleware running in the background after closing the Termux session. Add it to your startup script so everything launches automatically on boot.</div>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">How this compares to the QVAC + Expo approach</div>
+<div class="bai-sub">Comparison</div>
+
+<div class="bai-compare">
+<div class="bai-col bai-col-them">
+<div class="bai-col-title">QVAC + Expo (freeCodeCamp)</div>
+<ul>
+<li>Needs npm + Node.js dev machine</li>
+<li>React Native prebuild required</li>
+<li>Clean SDK with loadModel() API</li>
+<li>Works on iOS and Android</li>
+<li>Great for app developers</li>
+<li>Cannot run on Termux alone</li>
+</ul>
+</div>
+<div class="bai-col bai-col-you">
+<div class="bai-col-title">llama.cpp + Termux (this guide)</div>
+<ul>
+<li>Compiles natively on the phone</li>
+<li>Zero external build tools needed</li>
+<li>OpenAI-compatible API built in</li>
+<li>Android only (ARM64)</li>
+<li>Great for developers + hackers</li>
+<li>Runs entirely on Termux</li>
+</ul>
+</div>
+</div>
+
+<p>Neither approach is better &mdash; they solve different problems. QVAC is the right choice if you are building a mobile app to ship to users. The Termux + llama.cpp path is the right choice if you are building personal infrastructure on a phone you already own.</p>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">Performance expectations</div>
+<div class="bai-sub">Benchmarks</div>
+
+<div class="bai-spec">
+<div class="bai-srow"><span class="bai-slabel">Model</span><span>Qwen3 4B Q4_K_M on Motorola Edge 20</span></div>
+<div class="bai-srow"><span class="bai-slabel">Tokens/sec</span><span>~6&ndash;10 tok/s (varies with context length)</span></div>
+<div class="bai-srow"><span class="bai-slabel">RAM usage</span><span>~3.2 GB model + ~600 MB overhead</span></div>
+<div class="bai-srow"><span class="bai-slabel">First token</span><span>~3&ndash;5 seconds (cold start)</span></div>
+<div class="bai-srow"><span class="bai-slabel">Thermal</span><span>Phone gets warm &mdash; normal for sustained CPU inference</span></div>
+<div class="bai-srow"><span class="bai-slabel">Battery</span><span>Heavy drain during inference &mdash; plug in for long sessions</span></div>
+</div>
+
+<p>Six to ten tokens per second feels slow compared to a cloud API. In practice, for most tasks &mdash; summarising text, answering questions, writing code snippets &mdash; it is fast enough. The key benefit is not speed. It is privacy, zero cost, and zero internet dependency.</p>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">What I built on top of this</div>
+<div class="bai-sub">Real-world usage</div>
+
+<p>The local llama-server is one component in a larger system. On top of it I built a Flask middleware that routes queries to the local model for offline or private tasks, and to cloud APIs (Gemini, Claude, DeepSeek) for heavier reasoning. A single HTML file serves as the unified chat UI connecting to all backends.</p>
+
+<p>I also run a live algorithmic trading scanner, a Telegram bot assistant, and CA Foundation exam prep tools &mdash; all from the same phone. The local LLM handles tasks that should not leave the device. Everything else routes to the appropriate cloud API based on the task type.</p>
+
+<div class="bai-callout-green">The complete first article covering the full system &mdash; trading scanner, multi-model routing, and the overall architecture &mdash; is available on this blog.</div>
+
+<div class="bai-div"></div>
+
+<div class="bai-h2">Common issues and fixes</div>
+<div class="bai-sub">Troubleshooting</div>
+
+<div class="bai-ach">
+<div class="bai-atitle">cmake: command not found</div>
+<div class="bai-adesc">Run: <code>pkg install cmake</code>. Make sure you ran <code>pkg update</code> first.</div>
+</div>
+
+<div class="bai-ach">
+<div class="bai-atitle">Compilation killed / out of memory</div>
+<div class="bai-adesc">Use <code>make -j2</code> instead of <code>make -j$(nproc)</code> to reduce peak RAM usage during compilation.</div>
+</div>
+
+<div class="bai-ach">
+<div class="bai-atitle">Model loads but no output / gibberish</div>
+<div class="bai-adesc">Check that your model is in GGUF format. GGML format (older) is not supported by recent llama.cpp builds.</div>
+</div>
+
+<div class="bai-ach">
+<div class="bai-atitle">Server stops when Termux session closes</div>
+<div class="bai-adesc">Use <code>nohup</code> prefix or run inside a <code>tmux</code> session: <code>pkg install tmux</code> then <code>tmux new -s llm</code>.</div>
+</div>
+
+<div class="bai-ach">
+<div class="bai-atitle">Very slow inference (&lt;3 tok/s)</div>
+<div class="bai-adesc">Lower the context size with <code>-c 512</code> and reduce threads to <code>-t 2</code>. Also try a smaller model like Gemma 2B.</div>
+</div>
+
+<div class="bai-div"></div>
+
+<p>Running a local LLM on Android without an SDK is not the easiest path. But it works, it costs nothing ongoing, it runs entirely offline, and it builds understanding that using an SDK cannot give you. When you compile llama.cpp on your phone, you understand exactly what is happening between your prompt and the model's response.</p>
+
+<div class="bai-outro">The best infrastructure is the infrastructure you understand completely. When it breaks &mdash; and it will break &mdash; you can fix it, because you built it yourself, from the ground up, on a phone.</div>
+
+</div>
+
+<br><br>
+<div style="text-align:center;font-family:monospace;font-size:12px;color:#9a9890;padding:20px 0;border-top:1px solid #e0ddd6;">
+&larr; <a href="index.html">Back to first article</a> &nbsp;&middot;&nbsp; Bibhash AI Lab &nbsp;&middot;&nbsp; June 2026
+</div>
+</body>
+</html>
